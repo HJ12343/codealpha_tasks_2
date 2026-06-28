@@ -13,14 +13,12 @@ const Profile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
 
-  // Edit Profile Modal states
   const [showEditModal, setShowEditModal] = useState(false);
   const [editName, setEditName] = useState('');
   const [editBio, setEditBio] = useState('');
   const [editAvatarUrl, setEditAvatarUrl] = useState('');
   const [updating, setUpdating] = useState(false);
 
-  // Comments state for posts on profile
   const [openComments, setOpenComments] = useState({});
   const [newCommentText, setNewCommentText] = useState({});
 
@@ -47,7 +45,6 @@ const Profile = () => {
       setIsFollowing(data.isFollowing);
       setFollowersCount(data.followersCount);
 
-      // Initialize edit fields
       setEditName(data.name);
       setEditBio(data.bio || '');
       setEditAvatarUrl(data.avatarUrl || '');
@@ -62,7 +59,6 @@ const Profile = () => {
     if (!profile) return;
 
     try {
-      // Optimistic update
       setIsFollowing(!isFollowing);
       setFollowersCount(prev => isFollowing ? prev - 1 : prev + 1);
 
@@ -80,7 +76,6 @@ const Profile = () => {
       setFollowersCount(data.followersCount);
     } catch (err) {
       console.error(err);
-      // Revert if error
       setIsFollowing(profile.isFollowing);
       setFollowersCount(profile.followersCount);
     }
@@ -108,7 +103,6 @@ const Profile = () => {
       if (!response.ok) throw new Error('Failed to update profile');
       const updatedUser = await response.json();
 
-      // Update state in profile page
       setProfile(prev => ({
         ...prev,
         name: updatedUser.name,
@@ -116,7 +110,6 @@ const Profile = () => {
         avatarUrl: updatedUser.avatarUrl,
       }));
 
-      // Update state in globally shared AuthContext
       updateUserProfileState({
         name: updatedUser.name,
         bio: updatedUser.bio,
@@ -319,7 +312,6 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
-      {/* Profile Header Card */}
       <div className="glass-card profile-header-card">
         <div className="profile-banner-color"></div>
         <div className="profile-header-details">
@@ -377,7 +369,6 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* User's Posts list */}
       <div className="profile-posts-section">
         <h3 className="section-title">{profile.name}'s Posts</h3>
         
@@ -389,7 +380,6 @@ const Profile = () => {
           <div className="posts-container">
             {profile.posts.map((post) => (
               <div className="glass-card post-card" key={post.id}>
-                {/* Post Header */}
                 <div className="post-header">
                   <div className="post-header-author">
                     <img
@@ -416,7 +406,6 @@ const Profile = () => {
                   </div>
                 </div>
 
-                {/* Post Content */}
                 <div className="post-body">
                   <p className="post-text">{post.content}</p>
                   {post.imageUrl && (
@@ -426,7 +415,6 @@ const Profile = () => {
                   )}
                 </div>
 
-                {/* Post Actions */}
                 <div className="post-actions">
                   <button
                     className={`post-action-btn like-btn ${post.hasLiked ? 'liked' : ''}`}
@@ -445,7 +433,6 @@ const Profile = () => {
                   </button>
                 </div>
 
-                {/* Comments Section */}
                 {openComments[post.id] && (
                   <div className="comments-section">
                     <div className="comments-list">
@@ -470,7 +457,6 @@ const Profile = () => {
                                 <p className="comment-text">{comment.content}</p>
                               </div>
                               
-                              {/* Can delete if own comment or own post */}
                               {currentUser && (currentUser.id === comment.userId || currentUser.id === post.userId) && (
                                 <button
                                   className="btn-text-delete"
@@ -487,7 +473,6 @@ const Profile = () => {
                       )}
                     </div>
 
-                    {/* Add Comment Box */}
                     <form className="add-comment-form" onSubmit={(e) => handleAddComment(e, post.id)}>
                       <img
                         src={currentUser?.avatarUrl || 'https://api.dicebear.com/7.x/adventurer/svg'}
@@ -514,7 +499,6 @@ const Profile = () => {
         )}
       </div>
 
-      {/* Edit Profile Modal */}
       {showEditModal && (
         <div className="modal-backdrop">
           <div className="glass-card modal-card animate-zoom">

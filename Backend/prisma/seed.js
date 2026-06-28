@@ -19,7 +19,6 @@ async function main() {
 
   const hashedPassword = await bcrypt.hash('password123', 10);
 
-  // 1. Create Users
   const userA = await prisma.user.create({
     data: {
       email: 'user_a@example.com',
@@ -53,7 +52,6 @@ async function main() {
     },
   });
 
-  // 2. Create Posts
   const post1 = await prisma.post.create({
     data: {
       userId: userA.id,
@@ -78,7 +76,6 @@ async function main() {
     },
   });
 
-  // 3. Create Comments
   await prisma.comment.createMany({
     data: [
       {
@@ -104,7 +101,6 @@ async function main() {
     ],
   });
 
-  // 4. Create Likes
   await prisma.like.createMany({
     data: [
       { postId: post1.id, userId: userB.id },
@@ -115,15 +111,11 @@ async function main() {
     ],
   });
 
-  // 5. Create Follows
   await prisma.follow.createMany({
     data: [
-      // user_a follows user_b & user_c
       { followerId: userA.id, followingId: userB.id },
       { followerId: userA.id, followingId: userC.id },
-      // user_b follows user_a
       { followerId: userB.id, followingId: userA.id },
-      // user_c follows user_a & user_b
       { followerId: userC.id, followingId: userA.id },
       { followerId: userC.id, followingId: userB.id },
     ],

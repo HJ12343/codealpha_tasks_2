@@ -39,7 +39,6 @@ const Explore = () => {
 
   const handleFollowToggle = async (userId, isFollowing) => {
     try {
-      // Optimistic update
       setUsers(users.map(u => {
         if (u.id === userId) {
           return {
@@ -61,7 +60,6 @@ const Explore = () => {
       if (!response.ok) throw new Error('Failed to toggle follow status');
       const data = await response.json();
 
-      // Sync with response
       setUsers(users.map(u => {
         if (u.id === userId) {
           return {
@@ -80,7 +78,6 @@ const Explore = () => {
 
   return (
     <div className="explore-container">
-      {/* Search Header */}
       <div className="explore-header-row">
         <div className="explore-title-block">
           <h2>Discover People</h2>

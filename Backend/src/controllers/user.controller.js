@@ -1,6 +1,5 @@
 import prisma from '../db.js';
 
-// Get a user's profile details by username
 export const getUserProfile = async (req, res) => {
   try {
     const { username } = req.params;
@@ -71,7 +70,6 @@ export const getUserProfile = async (req, res) => {
     const followingCount = user.following.length;
     const isFollowing = user.followers.some((follow) => follow.followerId === currentUserId);
 
-    // Format user posts
     const formattedPosts = user.posts.map((post) => {
       const likesCount = post.likes.length;
       const commentsCount = post.comments.length;
@@ -104,7 +102,6 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-// Toggle follow/unfollow status
 export const toggleFollow = async (req, res) => {
   try {
     const followingId = parseInt(req.params.id);
@@ -122,7 +119,6 @@ export const toggleFollow = async (req, res) => {
       return res.status(404).json({ error: 'User to follow not found' });
     }
 
-    // Check if follow exists
     const existingFollow = await prisma.follow.findUnique({
       where: {
         followerId_followingId: {
@@ -134,7 +130,6 @@ export const toggleFollow = async (req, res) => {
 
     let following = false;
     if (existingFollow) {
-      // Unfollow
       await prisma.follow.delete({
         where: {
           followerId_followingId: {
@@ -144,7 +139,6 @@ export const toggleFollow = async (req, res) => {
         },
       });
     } else {
-      // Follow
       await prisma.follow.create({
         data: {
           followerId,
@@ -154,7 +148,6 @@ export const toggleFollow = async (req, res) => {
       following = true;
     }
 
-    // Get updated follow stats
     const followersCount = await prisma.follow.count({
       where: { followingId },
     });
@@ -166,7 +159,6 @@ export const toggleFollow = async (req, res) => {
   }
 };
 
-// Search or browse users (discover)
 export const searchUsers = async (req, res) => {
   try {
     const search = req.query.search ? String(req.query.search).trim() : '';
@@ -179,10 +171,10 @@ export const searchUsers = async (req, res) => {
               { username: { contains: search, mode: 'insensitive' } },
               { name: { contains: search, mode: 'insensitive' } },
             ],
-            NOT: { id: currentUserId }, // Exclude current user from search
+            NOT: { id: currentUserId },
           }
         : {
-            NOT: { id: currentUserId }, // Exclude current user from suggestions
+            NOT: { id: currentUserId },
           },
       select: {
         id: true,
@@ -219,7 +211,6 @@ export const searchUsers = async (req, res) => {
   }
 };
 
-// Update user profile details
 export const updateProfile = async (req, res) => {
   try {
     const { name, bio, avatarUrl } = req.body;

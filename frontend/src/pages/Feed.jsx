@@ -13,7 +13,6 @@ const Feed = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   
-  // Track open comment sections by postId
   const [openComments, setOpenComments] = useState({});
   const [newCommentText, setNewCommentText] = useState({});
 
@@ -89,7 +88,6 @@ const Feed = () => {
 
   const handleLikePost = async (postId) => {
     try {
-      // Optimistic Update
       setPosts(posts.map(post => {
         if (post.id === postId) {
           return {
@@ -111,7 +109,6 @@ const Feed = () => {
       if (!response.ok) throw new Error('Failed to toggle like');
       const data = await response.json();
 
-      // Sync with server response
       setPosts(posts.map(post => {
         if (post.id === postId) {
           return {
@@ -124,7 +121,6 @@ const Feed = () => {
       }));
     } catch (err) {
       console.error(err);
-      // Revert in case of failure
       fetchPosts();
     }
   };
@@ -232,7 +228,6 @@ const Feed = () => {
   return (
     <div className="feed-layout">
       <div className="feed-main-col">
-        {/* Create Post Widget */}
         <div className="glass-card compose-card">
           <form onSubmit={handleCreatePost}>
             <div className="compose-row">
@@ -304,7 +299,6 @@ const Feed = () => {
           <div className="posts-container">
             {posts.map((post) => (
               <div className="glass-card post-card" key={post.id}>
-                {/* Post Header */}
                 <div className="post-header">
                   <Link to={`/profile/${post.user.username}`} className="post-header-author">
                     <img
@@ -331,7 +325,6 @@ const Feed = () => {
                   </div>
                 </div>
 
-                {/* Post Content */}
                 <div className="post-body">
                   <p className="post-text">{post.content}</p>
                   {post.imageUrl && (
@@ -341,7 +334,6 @@ const Feed = () => {
                   )}
                 </div>
 
-                {/* Post Actions */}
                 <div className="post-actions">
                   <button
                     className={`post-action-btn like-btn ${post.hasLiked ? 'liked' : ''}`}
@@ -360,7 +352,6 @@ const Feed = () => {
                   </button>
                 </div>
 
-                {/* Comments Section */}
                 {openComments[post.id] && (
                   <div className="comments-section">
                     <div className="comments-list">
@@ -385,7 +376,6 @@ const Feed = () => {
                                 <p className="comment-text">{comment.content}</p>
                               </div>
                               
-                              {/* Can delete if own comment or own post */}
                               {user && (user.id === comment.userId || user.id === post.userId) && (
                                 <button
                                   className="btn-text-delete"
@@ -402,7 +392,6 @@ const Feed = () => {
                       )}
                     </div>
 
-                    {/* Add Comment Box */}
                     <form className="add-comment-form" onSubmit={(e) => handleAddComment(e, post.id)}>
                       <img
                         src={user?.avatarUrl || 'https://api.dicebear.com/7.x/adventurer/svg'}
@@ -429,7 +418,6 @@ const Feed = () => {
         )}
       </div>
       
-      {/* Sidebar Suggestions Column */}
       <div className="feed-sidebar-col">
         <div className="glass-card welcome-card">
           <div className="welcome-profile-header">

@@ -4,14 +4,12 @@
   --font-heading: 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
   
-  /* Harmonious obsidian dark mode palette */
   --bg-primary: #0b0f19;
   --bg-secondary: #111827;
   --bg-card: rgba(17, 24, 39, 0.7);
   --border-color: rgba(255, 255, 255, 0.08);
   --border-focus: rgba(99, 102, 241, 0.6);
   
-  /* Glowing gradients */
   --color-primary-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
   --color-primary-solid: #6366f1;
   --color-primary-hover: #4f46e5;
@@ -59,7 +57,6 @@ a {
   text-decoration: none;
 }
 
-/* Glassmorphism utility card */
 .glass-card {
   background-color: var(--bg-card);
   backdrop-filter: blur(16px);
@@ -74,7 +71,6 @@ a {
   border-color: rgba(255, 255, 255, 0.12);
 }
 
-/* App Layout */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -89,7 +85,6 @@ a {
   margin: 0 auto;
 }
 
-/* Header & Navbar */
 .navbar {
   position: sticky;
   top: 0;
@@ -184,7 +179,6 @@ a {
   box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
 }
 
-/* Forms & Inputs */
 .form-group {
   margin-bottom: 20px;
 }
@@ -222,7 +216,6 @@ a {
   min-height: 80px;
 }
 
-/* Buttons */
 .btn-primary {
   background: var(--color-primary-grad);
   color: var(--text-main);
@@ -271,7 +264,6 @@ a {
   transform: translateY(-2px);
 }
 
-/* Auth Pages */
 .auth-container {
   max-width: 440px;
   margin: 40px auto;
@@ -330,7 +322,6 @@ a {
   text-align: center;
 }
 
-/* Social Feed Layout */
 .feed-layout {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -353,7 +344,6 @@ a {
   gap: 24px;
 }
 
-/* Compose Widget */
 .compose-card {
   padding: 20px;
 }
@@ -436,7 +426,6 @@ a {
   font-size: 13px;
 }
 
-/* Post Cards */
 .posts-container {
   display: flex;
   flex-direction: column;
@@ -589,7 +578,6 @@ a {
   background-color: rgba(99, 102, 241, 0.1);
 }
 
-/* Comments Section */
 .comments-section {
   margin-top: 15px;
   padding-top: 15px;
@@ -709,7 +697,6 @@ a {
   cursor: not-allowed;
 }
 
-/* User Avatars */
 .user-avatar-large {
   width: 60px;
   height: 60px;
@@ -737,7 +724,6 @@ a {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Feed Sidebar */
 .feed-sidebar-col {
   display: flex;
   flex-direction: column;
@@ -804,7 +790,6 @@ a {
   margin: 0 auto;
 }
 
-/* Explore Page */
 .explore-container {
   display: flex;
   flex-direction: column;
@@ -945,7 +930,6 @@ a {
   color: var(--color-danger);
 }
 
-/* User Profile Page */
 .profile-container {
   display: flex;
   flex-direction: column;
@@ -1090,7 +1074,6 @@ a {
   padding-bottom: 10px;
 }
 
-/* Modals & Popups */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -1169,7 +1152,6 @@ a {
   gap: 12px;
 }
 
-/* Animations */
 .animate-zoom {
   animation: zoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -1185,7 +1167,6 @@ a {
   }
 }
 
-/* Loader */
 .loader-container {
   display: flex;
   justify-content: center;

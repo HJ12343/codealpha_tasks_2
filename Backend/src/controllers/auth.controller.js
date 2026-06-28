@@ -13,7 +13,6 @@ export const register = async (req, res) => {
     const trimmedUsername = username.trim().toLowerCase();
     const trimmedEmail = email.trim().toLowerCase();
 
-    // Check if email already in use
     const existingEmail = await prisma.user.findUnique({
       where: { email: trimmedEmail },
     });
@@ -21,7 +20,6 @@ export const register = async (req, res) => {
       return res.status(400).json({ error: 'Email already in use' });
     }
 
-    // Check if username already in use
     const existingUsername = await prisma.user.findUnique({
       where: { username: trimmedUsername },
     });
@@ -68,7 +66,7 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body; // In frontend, email field will be mapped to login id
+    const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email/Username and password are required' });
@@ -76,7 +74,6 @@ export const login = async (req, res) => {
 
     const searchId = email.trim().toLowerCase();
 
-    // Find user by email or username
     const user = await prisma.user.findFirst({
       where: {
         OR: [

@@ -1,6 +1,5 @@
 import prisma from '../db.js';
 
-// Get posts for feed
 export const getFeed = async (req, res) => {
   try {
     const currentUserId = req.user.userId;
@@ -41,7 +40,6 @@ export const getFeed = async (req, res) => {
       },
     });
 
-    // Format posts to include like details
     const formattedPosts = posts.map((post) => {
       const likesCount = post.likes.length;
       const commentsCount = post.comments.length;
@@ -52,7 +50,6 @@ export const getFeed = async (req, res) => {
         likesCount,
         commentsCount,
         hasLiked,
-        // Remove raw likes array to save bandwidth
         likes: undefined,
       };
     });
@@ -64,7 +61,6 @@ export const getFeed = async (req, res) => {
   }
 };
 
-// Create a post
 export const createPost = async (req, res) => {
   try {
     const { content, imageUrl } = req.body;
@@ -106,7 +102,6 @@ export const createPost = async (req, res) => {
   }
 };
 
-// Delete a post
 export const deletePost = async (req, res) => {
   try {
     const postId = parseInt(req.params.id);
@@ -135,7 +130,6 @@ export const deletePost = async (req, res) => {
   }
 };
 
-// Toggle like status on a post
 export const toggleLike = async (req, res) => {
   try {
     const postId = parseInt(req.params.id);
@@ -149,7 +143,6 @@ export const toggleLike = async (req, res) => {
       return res.status(404).json({ error: 'Post not found' });
     }
 
-    // Check if like exists
     const existingLike = await prisma.like.findUnique({
       where: {
         postId_userId: {
@@ -161,7 +154,6 @@ export const toggleLike = async (req, res) => {
 
     let liked = false;
     if (existingLike) {
-      // Unlike
       await prisma.like.delete({
         where: {
           postId_userId: {
@@ -171,7 +163,6 @@ export const toggleLike = async (req, res) => {
         },
       });
     } else {
-      // Like
       await prisma.like.create({
         data: {
           postId,
@@ -181,7 +172,6 @@ export const toggleLike = async (req, res) => {
       liked = true;
     }
 
-    // Get updated like count
     const likesCount = await prisma.like.count({
       where: { postId },
     });
@@ -193,7 +183,6 @@ export const toggleLike = async (req, res) => {
   }
 };
 
-// Add a comment to a post
 export const addComment = async (req, res) => {
   try {
     const postId = parseInt(req.params.id);
@@ -237,7 +226,6 @@ export const addComment = async (req, res) => {
   }
 };
 
-// Delete a comment
 export const deleteComment = async (req, res) => {
   try {
     const commentId = parseInt(req.params.id);
@@ -246,7 +234,7 @@ export const deleteComment = async (req, res) => {
     const comment = await prisma.comment.findUnique({
       where: { id: commentId },
       include: {
-        post: true, // to check if requester is post owner
+        post: true,
       },
     });
 
@@ -254,7 +242,6 @@ export const deleteComment = async (req, res) => {
       return res.status(404).json({ error: 'Comment not found' });
     }
 
-    // A comment can be deleted by either the author of the comment or the author of the post
     if (comment.userId !== userId && comment.post.userId !== userId) {
       return res.status(403).json({ error: 'You are not authorized to delete this comment' });
     }
