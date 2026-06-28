@@ -5,6 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState(null);
@@ -22,7 +23,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !email || !username || !password || !confirmPassword) {
       setError('Please fill in all fields.');
       return;
     }
@@ -36,7 +37,7 @@ const Register = () => {
     setError(null);
 
     try {
-      await register(name, email, password);
+      await register(name, email, username, password);
       navigate(redirect);
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
@@ -48,7 +49,7 @@ const Register = () => {
   return (
     <div className="auth-container">
       <h1 className="auth-title">Create Account</h1>
-      <p className="auth-subtitle">Join us to shop for premium merchandise</p>
+      <p className="auth-subtitle">Join us to share updates, follow interests, and connect with people</p>
 
       {error && <div className="auth-error">{error}</div>}
 
@@ -64,6 +65,22 @@ const Register = () => {
             placeholder="John Doe"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
+            disabled={loading}
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label" htmlFor="username">
+            Username
+          </label>
+          <input
+            id="username"
+            type="text"
+            className="form-input"
+            placeholder="johndoe"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
             disabled={loading}
           />

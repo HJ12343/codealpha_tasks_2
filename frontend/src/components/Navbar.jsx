@@ -1,12 +1,10 @@
 import React, { useContext } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { CartContext } from '../context/CartContext';
-import { ShoppingCart, ShoppingBag, User, LogOut, ClipboardList } from 'lucide-react';
+import { Home, Compass, User, LogOut, Sparkles } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
-  const { getCartCount } = useContext(CartContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -18,40 +16,37 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-brand">
-          <ShoppingBag size={26} color="#6366f1" />
-          <span>E-Shop</span>
+          <Sparkles size={24} className="brand-logo-icon" />
+          <span>SocioSphere</span>
         </Link>
         <ul className="navbar-links">
-          <li>
-            <NavLink to="/" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
-              Products
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/cart" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
-              <div className="cart-icon-container">
-                <ShoppingCart size={20} />
-                {getCartCount() > 0 && <span className="cart-badge">{getCartCount()}</span>}
-              </div>
-              <span>Cart</span>
-            </NavLink>
-          </li>
           {user ? (
             <>
               <li>
-                <NavLink to="/orders" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
-                  <ClipboardList size={18} />
-                  <span>Orders</span>
+                <NavLink to="/" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`} end>
+                  <Home size={18} />
+                  <span>Feed</span>
                 </NavLink>
               </li>
               <li>
-                <span className="navbar-link" style={{ cursor: 'default', color: 'var(--text-main)' }}>
-                  <User size={16} style={{ marginRight: '2px' }} />
-                  {user.name}
-                </span>
+                <NavLink to="/explore" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
+                  <Compass size={18} />
+                  <span>Explore</span>
+                </NavLink>
               </li>
               <li>
-                <button onClick={handleLogout} className="btn-logout">
+                <NavLink to={`/profile/${user.username}`} className={({ isActive }) => `navbar-link profile-nav-link ${isActive ? 'active' : ''}`}>
+                  <img
+                    src={user.avatarUrl || 'https://api.dicebear.com/7.x/adventurer/svg'}
+                    alt="avatar"
+                    className="user-avatar-tiny"
+                    style={{ margin: 0 }}
+                  />
+                  <span>@{user.username}</span>
+                </NavLink>
+              </li>
+              <li>
+                <button onClick={handleLogout} className="btn-logout-nav">
                   <LogOut size={16} />
                   <span>Logout</span>
                 </button>

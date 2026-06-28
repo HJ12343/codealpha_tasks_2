@@ -3,7 +3,7 @@ import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!loginId || !password) {
       setError('Please fill in all fields.');
       return;
     }
@@ -29,7 +29,7 @@ const Login = () => {
     setError(null);
 
     try {
-      await login(email, password);
+      await login(loginId, password);
       navigate(redirect);
     } catch (err) {
       setError(err.message || 'Login failed. Please try again.');
@@ -41,22 +41,22 @@ const Login = () => {
   return (
     <div className="auth-container">
       <h1 className="auth-title">Welcome Back</h1>
-      <p className="auth-subtitle">Sign in to your account to process orders</p>
+      <p className="auth-subtitle">Sign in to connect with friends and share your world</p>
 
       {error && <div className="auth-error">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label className="form-label" htmlFor="email">
-            Email Address
+          <label className="form-label" htmlFor="loginId">
+            Email or Username
           </label>
           <input
-            id="email"
-            type="email"
+            id="loginId"
+            type="text"
             className="form-input"
-            placeholder="name@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="username or email"
+            value={loginId}
+            onChange={(e) => setLoginId(e.target.value)}
             required
             disabled={loading}
           />

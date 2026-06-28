@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -10,42 +10,59 @@ generator client {
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
+  username  String   @unique
   password  String
   name      String
+  bio       String   @default("")
+  avatarUrl String   @default("")
   role      String   @default("USER")
   createdAt DateTime @default(now())
-  orders    Order[]
+  posts     Post[]
+  comments  Comment[]
+  likes     Like[]
+  followers Follow[] @relation("following")
+  following Follow[] @relation("follower")
 }
 
-model Product {
-  id          Int         @id @default(autoincrement())
-  name        String
-  description String
-  price       Float
-  imageUrl    String
-  stock       Int
-  category    String
-  createdAt   DateTime    @default(now())
-  orderItems  OrderItem[]
+model Post {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  comments  Comment[]
+  likes     Like[]
 }
 
-model Order {
-  id          Int         @id @default(autoincrement())
-  userId      Int
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  totalAmount Float
-  status      String      @default("PENDING")
-  address     String
-  createdAt   DateTime    @default(now())
-  items       OrderItem[]
+model Comment {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
 }
 
-model OrderItem {
-  id        Int     @id @default(autoincrement())
-  orderId   Int
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  quantity  Int
-  price     Float
+model Like {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+}
+
+model Follow {
+  id          Int      @id @default(autoincrement())
+  followerId  Int
+  followingId Int
+  follower    User     @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
 }

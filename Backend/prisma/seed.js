@@ -1,72 +1,133 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding products...');
-
-  // Delete existing data to start clean
-  await prisma.orderItem.deleteMany({});
-  await prisma.order.deleteMany({});
-  await prisma.product.deleteMany({});
-
-  const products = [
-    {
-      name: 'Wireless ANC Headset',
-      description: 'Premium active noise cancelling headphones with 40-hour battery life and custom audio tuning.',
-      price: 199.99,
-      imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60',
-      stock: 15,
-      category: 'Electronics',
-    },
-    {
-      name: 'Mechanical Gaming Keyboard',
-      description: 'Tactile mechanical switches, full RGB backlighting, and a solid aluminum top case.',
-      price: 129.99,
-      imageUrl: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&auto=format&fit=crop&q=60',
-      stock: 25,
-      category: 'Electronics',
-    },
-    {
-      name: 'Smart Fitness Watch',
-      description: 'Heart rate monitoring, blood oxygen tracking, sleep analysis, and built-in GPS with a vibrant AMOLED display.',
-      price: 159.99,
-      imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60',
-      stock: 30,
-      category: 'Fitness',
-    },
-    {
-      name: 'Ergonomic Desk Chair',
-      description: 'Breathable mesh backing, dynamic lumbar support, and adjustable armrests for maximum comfort.',
-      price: 249.99,
-      imageUrl: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=500&auto=format&fit=crop&q=60',
-      stock: 10,
-      category: 'Office',
-    },
-    {
-      name: 'Insulated Travel Mug',
-      description: 'Double-walled vacuum insulation keeps beverages hot for 12 hours or cold for 24 hours.',
-      price: 29.99,
-      imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&auto=format&fit=crop&q=60',
-      stock: 50,
-      category: 'Kitchen',
-    },
-    {
-      name: 'Minimalist Water-Resistant Backpack',
-      description: 'Durable nylon exterior, padded laptop sleeve fitting up to 15.6" screen, and sleek concealed zippers.',
-      price: 79.99,
-      imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60',
-      stock: 20,
-      category: 'Travel',
-    },
-  ];
-
-  for (const product of products) {
-    const created = await prisma.product.create({
-      data: product,
-    });
-    console.log(`Created product: ${created.name}`);
+  console.log('Clearing database...');
+  try {
+    await prisma.follow.deleteMany({});
+    await prisma.like.deleteMany({});
+    await prisma.comment.deleteMany({});
+    await prisma.post.deleteMany({});
+    await prisma.user.deleteMany({});
+  } catch (err) {
+    console.log('Some tables may not exist yet, skipping delete phase.');
   }
+
+  console.log('Seeding database with social media sample data...');
+
+  const hashedPassword = await bcrypt.hash('password123', 10);
+
+  // 1. Create Users
+  const userA = await prisma.user.create({
+    data: {
+      email: 'user_a@example.com',
+      username: 'user_a',
+      name: 'Name_1',
+      password: hashedPassword,
+      bio: 'Hello, this is my bio. I am Name_1.',
+      avatarUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=A',
+    },
+  });
+
+  const userB = await prisma.user.create({
+    data: {
+      email: 'user_b@example.com',
+      username: 'user_b',
+      name: 'Name_2',
+      password: hashedPassword,
+      bio: 'Hello, this is my bio. I am Name_2.',
+      avatarUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=B',
+    },
+  });
+
+  const userC = await prisma.user.create({
+    data: {
+      email: 'user_c@example.com',
+      username: 'user_c',
+      name: 'Name_3',
+      password: hashedPassword,
+      bio: 'Hello, this is my bio. I am Name_3.',
+      avatarUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=C',
+    },
+  });
+
+  // 2. Create Posts
+  const post1 = await prisma.post.create({
+    data: {
+      userId: userA.id,
+      content: 'This is a sample post from Name_1 (user_a) with an abstract vector image.',
+      imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800',
+    },
+  });
+
+  const post2 = await prisma.post.create({
+    data: {
+      userId: userB.id,
+      content: 'This is a sample post from Name_2 (user_b) with a colorful graphic.',
+      imageUrl: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=800',
+    },
+  });
+
+  const post3 = await prisma.post.create({
+    data: {
+      userId: userC.id,
+      content: 'This is a sample post from Name_3 (user_c) with a minimalist abstract art.',
+      imageUrl: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=800',
+    },
+  });
+
+  // 3. Create Comments
+  await prisma.comment.createMany({
+    data: [
+      {
+        postId: post1.id,
+        userId: userB.id,
+        content: 'This is a comment from Name_2 on Name_1\'s post.',
+      },
+      {
+        postId: post1.id,
+        userId: userC.id,
+        content: 'This is a comment from Name_3 on Name_1\'s post.',
+      },
+      {
+        postId: post2.id,
+        userId: userC.id,
+        content: 'This is a comment from Name_3 on Name_2\'s post.',
+      },
+      {
+        postId: post3.id,
+        userId: userA.id,
+        content: 'This is a comment from Name_1 on Name_3\'s post.',
+      },
+    ],
+  });
+
+  // 4. Create Likes
+  await prisma.like.createMany({
+    data: [
+      { postId: post1.id, userId: userB.id },
+      { postId: post1.id, userId: userC.id },
+      { postId: post2.id, userId: userA.id },
+      { postId: post2.id, userId: userC.id },
+      { postId: post3.id, userId: userA.id },
+    ],
+  });
+
+  // 5. Create Follows
+  await prisma.follow.createMany({
+    data: [
+      // user_a follows user_b & user_c
+      { followerId: userA.id, followingId: userB.id },
+      { followerId: userA.id, followingId: userC.id },
+      // user_b follows user_a
+      { followerId: userB.id, followingId: userA.id },
+      // user_c follows user_a & user_b
+      { followerId: userC.id, followingId: userA.id },
+      { followerId: userC.id, followingId: userB.id },
+    ],
+  });
 
   console.log('Seeding completed successfully!');
 }

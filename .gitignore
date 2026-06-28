@@ -42,3 +42,9 @@ venv
 .venv
 .venv/
 __pycache__/
+
+# Prisma & SQLite
+/Backend/prisma/*.db
+/Backend/prisma/*.db-journal
+*.db
+*.db-journal

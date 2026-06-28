@@ -9,33 +9,41 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const isExpired = payload.exp * 1000 < Date.now();
-        if (isExpired) {
-          logout();
-        } else {
-          setUser({
-            id: payload.userId,
-            email: payload.email,
-            role: payload.role,
-            name: payload.name || 'User',
-          });
-        }
-      } catch (error) {
+  const fetchCurrentUser = async (authToken) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data);
+      } else {
         logout();
       }
+    } catch (error) {
+      console.error('Error fetching current user:', error);
+      logout();
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchCurrentUser(token);
+    } else {
+      setUser(null);
+      setLoading(false);
+    }
   }, [token]);
 
-  const login = async (email, password) => {
+  const login = async (emailOrUsername, password) => {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email: emailOrUsername, password }),
     });
 
     const data = await response.json();
@@ -49,11 +57,11 @@ export const AuthProvider = ({ children }) => {
     return data.user;
   };
 
-  const register = async (name, email, password) => {
+  const register = async (name, email, username, password) => {
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, username, password }),
     });
 
     const data = await response.json();
@@ -73,8 +81,18 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateUserProfileState = (updatedUserFields) => {
+    setUser((prevUser) => {
+      if (!prevUser) return null;
+      return {
+        ...prevUser,
+        ...updatedUserFields,
+      };
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout, updateUserProfileState }}>
       {children}
     </AuthContext.Provider>
   );
